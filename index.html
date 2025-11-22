@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Konfigurasi Elektron</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+
+        .subtitle {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .atom-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: radial-gradient(circle, #1a2a6c 10%, transparent 11%),
+                        radial-gradient(circle, transparent 10%, #1a2a6c 11%, transparent 12%),
+                        radial-gradient(circle, transparent 10%, #b21f1f 11%, transparent 12%);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px, 0 30px;
+            border-radius: 50%;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1a2a6c;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: #1a2a6c;
+            outline: none;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 5px solid #1a2a6c;
+        }
+
+        .question-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a2a6c;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background-color: #e9ecef;
+            border-color: #b21f1f;
+        }
+
+        .option.selected {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+
+        .option.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            animation: pulse 0.5s;
+        }
+
+        .option.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .feedback.correct {
+            background-color: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #prev-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        #prev-btn:hover:not(:disabled) {
+            background-color: #5a6268;
+        }
+
+        #next-btn {
+            background-color: #1a2a6c;
+            color: white;
+        }
+
+        #next-btn:hover:not(:disabled) {
+            background-color: #15225a;
+        }
+
+        #submit-btn {
+            background-color: #28a745;
+            color: white;
+            display: none;
+        }
+
+        #submit-btn:hover {
+            background-color: #218838;
+        }
+
+        #start-btn {
+            background-color: #1a2a6c;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        #start-btn:hover {
+            background-color: #15225a;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .results, .intro {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .results h2, .intro h2 {
+            color: #1a2a6c;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #1a2a6c;
+        }
+
+        .user-info {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+        }
+
+        .result-details {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-item.correct {
+            background-color: #f8fff8;
+        }
+
+        .result-item.incorrect {
+            background-color: #fff8f8;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: confetti-fall 5s linear forwards;
+            z-index: 1000;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .quiz-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Halaman Pengenalan -->
+    <div class="container intro" id="intro-container">
+        <header>
+            <div class="atom-icon"></div>
+            <h1>Kuis Konfigurasi Elektron</h1>
+            <p class="subtitle">Asesmen Awal Pembelajaran Kimia</p>
+        </header>
+        
+        <div class="form-group">
+            <label for="nama">Nama Lengkap:</label>
+            <input type="text" id="nama" placeholder="Masukkan nama lengkap Anda">
+        </div>
+        
+        <div class="form-group">
+            <label for="kelas">Kelas:</label>
+            <input type="text" id="kelas" placeholder="Contoh: XI IPA 1">
+        </div>
+        
+        <div class="instructions">
+            <h3>Petunjuk Kuis:</h3>
+            <ul style="text-align: left; margin: 15px 0; padding-left: 20px;">
+                <li>Kuis ini terdiri dari 5 soal pilihan ganda</li>
+                <li>Pilih jawaban yang menurut Anda benar dengan mengklik pilihan</li>
+                <li>Setelah memilih jawaban, akan muncul penjelasan untuk membantu pemahaman</li>
+                <li>Gunakan tombol "Sebelumnya" dan "Selanjutnya" untuk navigasi</li>
+                <li>Skor akan dihitung secara otomatis</li>
+                <li><strong>Kuis hanya dapat dikerjakan sekali</strong></li>
+            </ul>
+        </div>
+        
+        <button id="start-btn">Mulai Kuis</button>
+    </div>
+    
+    <!-- Halaman Kuis -->
+    <div class="container" id="quiz-container" style="display: none;">
+        <header>
+            <div class="atom-icon"></div>
+            <h1>Kuis Konfigurasi Elektron</h1>
+            <p class="subtitle">Asesmen Awal Pembelajaran Kimia</p>
+        </header>
+        
+        <div class="user-info">
+            <p><strong>Nama:</strong> <span id="display-nama"></span></p>
+            <p><strong>Kelas:</strong> <span id="display-kelas"></span></p>
+        </div>
+        
+        <div class="quiz-info">
+            <div class="info-item">
+                <strong>Jumlah Soal:</strong> <span id="total-questions">5</span>
+            </div>
+            <div class="info-item">
+                <strong>Soal:</strong> <span id="current-question">1</span>/<span id="total-questions-display">5</span>
+            </div>
+            <div class="info-item">
+                <strong>Skor:</strong> <span id="score">0</span>/5
+            </div>
+        </div>
+        
+        <div id="questions-container">
+            <!-- Soal akan dimasukkan di sini oleh JavaScript -->
+        </div>
+        
+        <div class="actions">
+            <button id="prev-btn" disabled>Sebelumnya</button>
+            <button id="next-btn">Selanjutnya</button>
+            <button id="submit-btn">Selesai & Lihat Hasil</button>
+        </div>
+    </div>
+    
+    <!-- Halaman Hasil -->
+    <div class="container results" id="results-container">
+        <header>
+            <div class="atom-icon"></div>
+            <h1>Hasil Kuis Konfigurasi Elektron</h1>
+            <p class="subtitle">Asesmen Awal Pembelajaran Kimia</p>
+        </header>
+        
+        <div class="user-info">
+            <p><strong>Nama:</strong> <span id="result-nama"></span></p>
+            <p><strong>Kelas:</strong> <span id="result-kelas"></span></p>
+        </div>
+        
+        <div class="score" id="final-score">0/5</div>
+        <p id="result-message"></p>
+        
+        <div class="result-details" id="result-details">
+            <!-- Detail hasil akan dimasukkan di sini oleh JavaScript -->
+        </div>
+        
+        <div style="margin-top: 30px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+            <p><strong>Kuis telah selesai. Terima kasih telah berpartisipasi!</strong></p>
+            <p style="margin-top: 10px;">Hasil ini akan dicatat sebagai asesmen awal pembelajaran Anda.</p>
+        </div>
+    </div>
+
+    <script>
+        // Data soal kuis
+        const questions = [
+            {
+                question: "Atom Natrium (Na) memiliki nomor atom 11. Menurut aturan Aufbau, konfigurasi elektron yang benar adalah:",
+                options: [
+                    "1s² 2s² 2p⁶ 3s¹",
+                    "1s² 2s² 2p⁷",
+                    "1s² 2s² 2p⁶ 3s²",
+                    "1s² 2s² 2p⁶ 3p¹"
+                ],
+                correctAnswer: 0,
+                explanation: {
+                    correct: "Benar! Konfigurasi elektron Na (nomor atom 11) adalah 1s² 2s² 2p⁶ 3s¹. Elektron mengisi orbital dengan energi terendah terlebih dahulu (aturan Aufbau).",
+                    incorrect: "Salah. Konfigurasi yang benar adalah 1s² 2s² 2p⁶ 3s¹. Elektron mengisi orbital dengan energi terendah terlebih dahulu (1s → 2s → 2p → 3s)."
+                }
+            },
+            {
+                question: "Prinsip Hund menyatakan bahwa:",
+                options: [
+                    "Elektron mengisi orbital dengan energi terendah dulu",
+                    "Elektron berpasangan dalam satu orbital",
+                    "Elektron mengisi orbital kosong secara tunggal dulu sebelum berpasangan",
+                    "Tidak ada dua elektron dengan spin sama"
+                ],
+                correctAnswer: 2,
+                explanation: {
+                    correct: "Benar! Prinsip Hund menyatakan bahwa elektron akan mengisi orbital kosong secara tunggal terlebih dahulu sebelum berpasangan dalam satu orbital.",
+                    incorrect: "Salah. Prinsip Hund menyatakan bahwa elektron akan mengisi orbital kosong secara tunggal terlebih dahulu sebelum berpasangan dalam satu orbital untuk meminimalkan tolakan antar elektron."
+                }
+            },
+            {
+                question: "Gas mulia seperti Neon (Ne) sangat stabil karena:",
+                options: [
+                    "Memiliki 8 elektron valensi (oktet)",
+                    "Memiliki 2 elektron valensi",
+                    "Memiliki orbital d terisi penuh",
+                    "Memiliki inti atom yang besar"
+                ],
+                correctAnswer: 0,
+                explanation: {
+                    correct: "Benar! Gas mulia seperti Neon (Ne) memiliki 8 elektron valensi (konfigurasi oktet) yang membuatnya sangat stabil dan tidak reaktif.",
+                    incorrect: "Salah. Gas mulia seperti Neon (Ne) stabil karena memiliki 8 elektron valensi (konfigurasi oktet), bukan karena ukuran inti atom atau orbital d yang terisi penuh."
+                }
+            },
+            {
+                question: "Unsur dengan konfigurasi elektron 1s² 2s² 2p⁶ 3s² 3p⁵ akan cenderung:",
+                options: [
+                    "Stabil seperti gas mulia",
+                    "Melepas 1 elektron",
+                    "Mengikat 1 elektron",
+                    "Tidak bereaksi sama sekali"
+                ],
+                correctAnswer: 2,
+                explanation: {
+                    correct: "Benar! Unsur dengan konfigurasi elektron 1s² 2s² 2p⁶ 3s² 3p⁵ memiliki 7 elektron valensi (golongan VIIA) dan akan cenderung mengikat 1 elektron untuk mencapai kestabilan oktet seperti gas mulia.",
+                    incorrect: "Salah. Unsur dengan konfigurasi ini memiliki 7 elektron valensi (golongan VIIA) dan akan cenderung mengikat 1 elektron untuk mencapai kestabilan oktet, bukan melepas elektron."
+                }
+            },
+            {
+                question: "Dalam satu orbital, maksimal dapat diisi oleh:",
+                options: [
+                    "1 elektron",
+                    "2 elektron",
+                    "4 elektron",
+                    "8 elektron"
+                ],
+                correctAnswer: 1,
+                explanation: {
+                    correct: "Benar! Menurut prinsip Pauli, dalam satu orbital maksimal dapat diisi oleh 2 elektron dengan spin yang berlawanan.",
+                    incorrect: "Salah. Menurut prinsip Pauli, dalam satu orbital maksimal dapat diisi oleh 2 elektron dengan spin yang berlawanan."
+                }
+            }
+        ];
+
+        // Variabel state kuis
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let score = 0;
+        let userName = "";
+        let userClass = "";
+        let quizCompleted = false;
+
+        // Elemen DOM
+        const introContainer = document.getElementById('intro-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const questionsContainer = document.getElementById('questions-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultsContainer = document.getElementById('results-container');
+        const finalScore = document.getElementById('final-score');
+        const resultMessage = document.getElementById('result-message');
+        const resultDetails = document.getElementById('result-details');
+        const startBtn = document.getElementById('start-btn');
+        const currentQuestionDisplay = document.getElementById('current-question');
+        const scoreDisplay = document.getElementById('score');
+        const displayNama = document.getElementById('display-nama');
+        const displayKelas = document.getElementById('display-kelas');
+        const resultNama = document.getElementById('result-nama');
+        const resultKelas = document.getElementById('result-kelas');
+
+        // Tampilkan halaman intro pertama kali
+        introContainer.style.display = 'block';
+
+        // Fungsi untuk membuat confetti
+        function createConfetti() {
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+
+        // Fungsi untuk memulai kuis
+        function startQuiz() {
+            userName = document.getElementById('nama').value.trim();
+            userClass = document.getElementById('kelas').value.trim();
+            
+            if (!userName || !userClass) {
+                alert("Silakan isi nama dan kelas terlebih dahulu!");
+                return;
+            }
+            
+            // Tampilkan informasi pengguna
+            displayNama.textContent = userName;
+            displayKelas.textContent = userClass;
+            
+            // Sembunyikan intro, tampilkan kuis
+            introContainer.style.display = 'none';
+            quizContainer.style.display = 'block';
+            
+            // Tampilkan soal pertama
+            displayQuestion();
+        }
+
+        // Fungsi untuk menampilkan soal
+        function displayQuestion() {
+            currentQuestionDisplay.textContent = currentQuestionIndex + 1;
+            
+            const question = questions[currentQuestionIndex];
+            const questionHTML = `
+                <div class="question-container">
+                    <div class="question">${question.question}</div>
+                    <div class="options">
+                        ${question.options.map((option, index) => `
+                            <div class="option ${userAnswers[currentQuestionIndex] === index ? 'selected' : ''}" data-index="${index}">
+                                ${String.fromCharCode(65 + index)}. ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="feedback ${userAnswers[currentQuestionIndex] !== null ? (userAnswers[currentQuestionIndex] === question.correctAnswer ? 'correct' : 'incorrect') : ''}" 
+                         style="${userAnswers[currentQuestionIndex] !== null ? 'display: block;' : ''}">
+                        ${userAnswers[currentQuestionIndex] !== null ? 
+                            (userAnswers[currentQuestionIndex] === question.correctAnswer ? 
+                                question.explanation.correct : 
+                                question.explanation.incorrect) : ''}
+                    </div>
+                </div>
+            `;
+            
+            questionsContainer.innerHTML = questionHTML;
+            
+            // Tambahkan event listener untuk opsi
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', () => {
+                    if (userAnswers[currentQuestionIndex] === null && !quizCompleted) {
+                        const selectedIndex = parseInt(option.getAttribute('data-index'));
+                        userAnswers[currentQuestionIndex] = selectedIndex;
+                        
+                        // Tampilkan feedback
+                        const feedback = document.querySelector('.feedback');
+                        const isCorrect = selectedIndex === question.correctAnswer;
+                        
+                        if (isCorrect) {
+                            option.classList.add('correct');
+                            feedback.classList.add('correct');
+                            feedback.classList.remove('incorrect');
+                            feedback.textContent = question.explanation.correct;
+                            score++;
+                            scoreDisplay.textContent = score;
+                            
+                            // Animasi untuk jawaban benar
+                            createConfetti();
+                        } else {
+                            option.classList.add('incorrect');
+                            feedback.classList.add('incorrect');
+                            feedback.classList.remove('correct');
+                            feedback.textContent = question.explanation.incorrect;
+                            
+                            // Tandai jawaban yang benar
+                            document.querySelectorAll('.option')[question.correctAnswer].classList.add('correct');
+                        }
+                        
+                        feedback.style.display = 'block';
+                        
+                        // Perbarui status tombol
+                        updateButtons();
+                    }
+                });
+            });
+            
+            updateButtons();
+        }
+
+        // Fungsi untuk memperbarui status tombol
+        function updateButtons() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            if (currentQuestionIndex === questions.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+                submitBtn.disabled = userAnswers[currentQuestionIndex] === null;
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+                nextBtn.disabled = userAnswers[currentQuestionIndex] === null;
+            }
+        }
+
+        // Fungsi untuk menampilkan hasil
+        function showResults() {
+            // Tandai kuis telah selesai
+            quizCompleted = true;
+            
+            // Tampilkan informasi pengguna di hasil
+            resultNama.textContent = userName;
+            resultKelas.textContent = userClass;
+            
+            // Hitung skor akhir
+            const finalScoreValue = score;
+            finalScore.textContent = `${finalScoreValue}/${questions.length}`;
+            
+            // Tentukan pesan hasil
+            let message = "";
+            if (finalScoreValue === questions.length) {
+                message = "Sempurna! Anda menguasai konsep konfigurasi elektron dengan sangat baik.";
+            } else if (finalScoreValue >= questions.length * 0.7) {
+                message = "Bagus! Pemahaman Anda tentang konfigurasi elektron sudah baik, tetapi masih perlu sedikit penyempurnaan.";
+            } else if (finalScoreValue >= questions.length * 0.5) {
+                message = "Cukup baik. Anda memahami beberapa konsep dasar, tetapi perlu mempelajari lebih lanjut tentang aturan Aufbau, Pauli, dan Hund.";
+            } else {
+                message = "Anda perlu mempelajari kembali materi konfigurasi elektron. Fokus pada aturan Aufbau, Pauli, dan Hund serta hubungan konfigurasi elektron dengan sifat kimia unsur.";
+            }
+            resultMessage.textContent = message;
+            
+            // Tampilkan detail hasil
+            let detailsHTML = "<h3>Detail Jawaban:</h3>";
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                detailsHTML += `
+                    <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <p><strong>Soal ${index + 1}:</strong> ${question.question}</p>
+                        <p><strong>Jawaban Anda:</strong> ${userAnswers[index] !== null ? question.options[userAnswers[index]] : 'Tidak dijawab'}</p>
+                        <p><strong>Jawaban Benar:</strong> ${question.options[question.correctAnswer]}</p>
+                        <p><strong>Penjelasan:</strong> ${isCorrect ? question.explanation.correct : question.explanation.incorrect}</p>
+                    </div>
+                `;
+            });
+            resultDetails.innerHTML = detailsHTML;
+            
+            // Tampilkan hasil, sembunyikan kuis
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+        }
+
+        // Event listener untuk tombol
+        startBtn.addEventListener('click', startQuiz);
+        
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0 && !quizCompleted) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < questions.length - 1 && !quizCompleted) {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+        });
+
+        submitBtn.addEventListener('click', showResults);
+
+        // Tambahkan event listener untuk Enter pada form
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && introContainer.style.display !== 'none') {
+                startQuiz();
+            }
+        });
+    </script>
+</body>
+</html>
